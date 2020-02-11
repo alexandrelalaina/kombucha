@@ -10,10 +10,30 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
+
+class Tipo(Base):
+    __tablename__='tipo'
+    id = Column(Integer, primary_key=True)
+    descr = Column(String(100))
+
+    def __repr__(self):
+        return self.descr
+
+    def save(self):
+        db_session.add(self)
+        db_session.commit()
+
+    def delete(self):
+        db_session.delete(self)
+        db_session.commit()
+
+
 class Item(Base):
     __tablename__ = 'item'
     id = Column(Integer, primary_key=True)
     nome = Column(String(255))
+    fkTipoId = Column(Integer, ForeignKey('tipo.id'))
+    tipo = relationship("tipo")
 
     def __repr__(self):
         return self.nome
@@ -25,6 +45,7 @@ class Item(Base):
     def delete(self):
         db_session.delete(self)
         db_session.commit()
+
 
 def init_db():
     Base.metadata.create_all(bind=engine)

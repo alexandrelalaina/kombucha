@@ -1,4 +1,4 @@
-from models import Item
+from models import Item, Tipo
 from flask import Flask, request
 from flask_restful import Resource, Api
 
@@ -8,7 +8,9 @@ api = Api(app)
 
 class ItemLista(Resource):
     def get(self):
+        print("<<<ItemLista>>>")
         item = Item.query.all()
+        print(item)
         response = [{'id': i.id, 'nome': i.nome} for i in item]
         return response
 
@@ -47,7 +49,14 @@ class ItemLista(Resource):
         response = [{'id':i.id, 'nome':i.nome} for i in itemLista]
         return response
 
+class ItemTipoLista(Resource):
+    def get(self):
+        tipo = Tipo.query.all()
+        response = [{'id':x.id, 'descr':x.descr} for x in tipo]
+        return response
+
 api.add_resource(ItemLista, '/item/')
+api.add_resource(ItemTipoLista, '/itemTipo/')
 
 if __name__ == '__main__':
     app.run(debug=True)
