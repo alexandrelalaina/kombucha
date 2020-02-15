@@ -11,15 +11,26 @@ class ItemLista(Resource):
         print("<<<ItemLista>>>")
         item = Item.query.all()
         print(item)
-        response = [{'id': i.id, 'nome': i.nome} for i in item]
+        for i in item:
+            print(format(i.tipo))
+
+        print("fazer response")
+        response = []
+        for i in item:
+            response.append({'id': i.id, 'nome': i.nome, 'tipo': i.tipo.descr })
         return response
 
     def post(self):
+        print("<<<ItemLista post>>>")
         dados = request.json
-        item = Item(id=dados["id"], nome=dados["nome"])
+        print(dados)
+        item = Item(id=dados['id'], nome=dados['nome'])
+        tipo = Tipo.query.filter_by(id=dados['tipo']).first()
+        item.tipo = tipo
         item.save()
         response = {'id': item.id,
-                    'nome': item.nome}
+                    'nome': item.nome,
+                    'tipo': item.tipo}
         return response
 
     def put(self):
@@ -49,11 +60,13 @@ class ItemLista(Resource):
         response = [{'id':i.id, 'nome':i.nome} for i in itemLista]
         return response
 
+
 class ItemTipoLista(Resource):
     def get(self):
         tipo = Tipo.query.all()
         response = [{'id':x.id, 'descr':x.descr} for x in tipo]
         return response
+
 
 api.add_resource(ItemLista, '/item/')
 api.add_resource(ItemTipoLista, '/itemTipo/')
